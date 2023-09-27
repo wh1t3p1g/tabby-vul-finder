@@ -1,0 +1,65 @@
+[
+  {
+    "name": "netty_to_serialize",
+    "type": "netty",
+    "cypher": "match (source:Method {IS_NETTY_ENDPOINT: true}) $SOURCE_WHERE\nmatch (sink:Method {IS_SINK: true, VUL:\"SERIALIZE\"}) $SINK_WHERE\ncall tabby.beta.findPath(source, \"-\", sink, 8, true) yield path $PATH_WHERE\nreturn path limit 1",
+    "sourceBlacklist": [],
+    "pathBlacklist": ["java.lang.Iterable#iterator","java.util.Iterator#hasNext"]
+  },
+  {
+    "name": "web_to_code",
+    "type": "web",
+    "cypher": "match (source:Method {IS_ENDPOINT: true}) $SOURCE_WHERE\nmatch (sink:Method {IS_SINK: true, VUL:\"CODE\"}) $SINK_WHERE\ncall tabby.beta.findPath(source, \"-\", sink, 8, true) yield path $PATH_WHERE\nreturn path limit 1",
+    "sourceBlacklist": [],
+    "pathBlacklist": ["java.lang.Runnable#run","java.security.PrivilegedExceptionAction#run","java.lang.Iterable#iterator"]
+  },
+  {
+    "name": "web_to_exec",
+    "type": "web",
+    "cypher": "match (source:Method {IS_ENDPOINT: true}) $SOURCE_WHERE\nmatch (sink:Method {IS_SINK: true, VUL:\"EXEC\"}) $SINK_WHERE\ncall tabby.beta.findPath(source, \"-\", sink, 8, true) yield path $PATH_WHERE\nreturn path limit 1",
+    "sourceBlacklist": [],
+    "pathBlacklist": ["java.lang.Runnable#run","java.security.PrivilegedExceptionAction#run","java.lang.Iterable#iterator"]
+  },
+  {
+    "name": "web_to_file",
+    "type": "web",
+    "cypher": "match (source:Method {IS_ENDPOINT: true}) $SOURCE_WHERE\nmatch (sink:Method {IS_SINK: true, VUL:\"FILE\"}) $SINK_WHERE\ncall tabby.beta.findPath(source, \"-\", sink, 8, true) yield path $PATH_WHERE\nreturn path limit 1",
+    "sourceBlacklist": [],
+    "pathBlacklist": ["java.lang.Runnable#run","java.security.PrivilegedExceptionAction#run","java.lang.Iterable#iterator"]
+  },
+  {
+    "name": "web_to_file_write",
+    "type": "web",
+    "cypher": "match (source:Method {IS_ENDPOINT: true}) $SOURCE_WHERE\nmatch (sink:Method {IS_SINK: true, VUL:\"FILE_WRITE\"}) $SINK_WHERE\ncall tabby.beta.findPath(source, \"-\", sink, 8, true) yield path $PATH_WHERE\nreturn path limit 1",
+    "sourceBlacklist": [],
+    "pathBlacklist": ["java.lang.Runnable#run","java.security.PrivilegedExceptionAction#run","java.lang.Iterable#iterator"]
+  },
+  {
+    "name": "web_to_serialize",
+    "type": "web",
+    "cypher": "match (source:Method {IS_ENDPOINT: true}) $SOURCE_WHERE\nmatch (sink:Method {IS_SINK: true, VUL:\"SERIALIZE\"}) $SINK_WHERE\ncall tabby.beta.findPath(source, \"-\", sink, 8, true) yield path $PATH_WHERE\nreturn path limit 1",
+    "sourceBlacklist": [],
+    "pathBlacklist": ["java.lang.Runnable#run","java.security.PrivilegedExceptionAction#run","java.lang.Iterable#iterator"]
+  },
+  {
+    "name": "web_to_sqli",
+    "type": "web",
+    "cypher": "match (source:Method {IS_ENDPOINT: true}) $SOURCE_WHERE\nmatch (sink:Method {IS_SINK: true, VUL:\"SQLI\"}) $SINK_WHERE\ncall tabby.beta.findPath(source, \"-\", sink, 8, true) yield path $PATH_WHERE\nreturn path limit 1",
+    "sourceBlacklist": [],
+    "pathBlacklist": ["java.lang.Runnable#run","java.security.PrivilegedExceptionAction#run","java.lang.Iterable#iterator"]
+  },
+  {
+    "name": "web_to_ssrf",
+    "type": "web",
+    "cypher": "match (source:Method {IS_ENDPOINT: true}) $SOURCE_WHERE\nmatch (sink:Method {IS_SINK: true, VUL:\"SSRF\"}) $SINK_WHERE\ncall tabby.beta.findPath(source, \"-\", sink, 8, true) yield path $PATH_WHERE\nreturn path limit 1",
+    "sourceBlacklist": [],
+    "pathBlacklist": ["java.lang.Runnable#run","java.security.PrivilegedExceptionAction#run","java.lang.Iterable#iterator"]
+  },
+  {
+    "name": "web_to_xxe",
+    "type": "web",
+    "cypher": "match (source:Method {IS_ENDPOINT: true}) $SOURCE_WHERE\nmatch (sink:Method {IS_SINK: true, VUL:\"XXE\"}) $SINK_WHERE\ncall tabby.beta.findPath(source, \"-\", sink, 8, true) yield path $PATH_WHERE\nreturn path limit 1",
+    "sourceBlacklist": [],
+    "pathBlacklist": ["java.lang.Runnable#run","java.security.PrivilegedExceptionAction#run","java.lang.Iterable#iterator"]
+  }
+]
