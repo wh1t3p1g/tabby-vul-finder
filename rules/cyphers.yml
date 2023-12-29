@@ -31,6 +31,7 @@ pathBlacklists:
   - "java.lang.Thread#run"
   - "java.util.Map#put"
   - "java.util.List#contains"
+  - "java.lang.Iterable#forEach"
 ---
 name: "web_to_code"
 type: "web"
@@ -45,7 +46,8 @@ depth: 8
 limit: 10
 procedure: "tabby.beta.findPath"
 sourceBlacklists: []
-pathBlacklists: []
+pathBlacklists:
+  - "java.lang.Iterable#forEach"
 ---
 name: "web_to_exec"
 type: "web"
@@ -60,7 +62,8 @@ depth: 8
 limit: 10
 procedure: "tabby.beta.findPath"
 sourceBlacklists: []
-pathBlacklists: []
+pathBlacklists:
+  - "java.lang.Iterable#forEach"
 ---
 name: "web_to_file"
 type: "web"
@@ -79,6 +82,7 @@ pathBlacklists:
   - "java.io.InputStream#read"
   - "java.io.Writer#write"
   - "java.io.File#delete"
+  - "java.lang.Iterable#forEach"
 ---
 name: "web_to_file_write"
 type: "web"
@@ -98,6 +102,7 @@ pathBlacklists:
   - "java.io.Writer#write"
   - "java.io.OutputStream#write"
   - "java.io.InputStream#read"
+  - "java.lang.Iterable#forEach"
 ---
 name: "web_to_serialize"
 type: "web"
@@ -114,6 +119,7 @@ procedure: "tabby.beta.findPath"
 sourceBlacklists: []
 pathBlacklists:
   - "java.util.List#contains"
+  - "java.lang.Iterable#forEach"
 ---
 name: "web_to_sqli"
 type: "web"
@@ -130,6 +136,7 @@ procedure: "tabby.beta.findPath"
 sourceBlacklists: []
 pathBlacklists:
   - "java.sql.Connection#isClosed"
+  - "java.lang.Iterable#forEach"
 ---
 name: "web_to_ssrf"
 type: "web"
@@ -147,6 +154,7 @@ sourceBlacklists: []
 pathBlacklists:
   - "java.io.InputStream#read"
   - "java.io.OutputStream#write"
+  - "java.lang.Iterable#forEach"
 ---
 name: "web_to_xxe"
 type: "web"
@@ -176,4 +184,5 @@ depth: 8
 limit: 10
 procedure: "tabby.beta.findPath"
 sourceBlacklists: []
-pathBlacklists: []
+pathBlacklists:
+  - "java.lang.Iterable#forEach"

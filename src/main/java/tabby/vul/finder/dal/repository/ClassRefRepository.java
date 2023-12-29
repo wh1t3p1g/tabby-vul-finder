@@ -14,7 +14,7 @@ import tabby.vul.finder.dal.entity.ClassEntity;
 public interface ClassRefRepository extends Neo4jRepository<ClassEntity, String> {
 
     @Query("CALL apoc.periodic.iterate(\"CALL apoc.load.csv('file://\"+$path+\"', " +
-            "{header:true, ignore: ['CHILD_CLASSNAMES','IS_PHANTOM','IS_INITIALED', 'FIELDS'], mapping:{ " +
+            "{header:true, ignore: ['IS_PHANTOM','IS_INITIALED', 'FIELDS'], mapping:{ " +
             "IS_INTERFACE: {type:'boolean'}, " +
             "IS_PUBLIC: {type:'boolean'}, " +
             "IS_ABSTRACT: {type:'boolean'}, " +
