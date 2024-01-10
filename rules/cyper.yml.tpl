@@ -1,15 +1,15 @@
-name: "netty_to_serialize"
-type: "netty"
+name: "web_to_code"
+type: "web"
 source:
-  type: "source|sink"
-  nettyEndpoint: boolean
-  endpoint: boolean
-  name0: string
+  type: "source"
+  endpoint: true
 sink:
   type: "sink"
   sink: true
-  vul: "SERIALIZE"
+  vul: "CODE"
 depth: 8
+limit: 10
+procedure: "tabby.algo.findPath"
+sourceBlacklists: []
 pathBlacklists:
-  - "java.lang.Iterable#iterator"
-  - "java.util.Iterator#hasNext"
+  - "java.lang.Iterable#forEach"

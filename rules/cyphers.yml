@@ -1,38 +1,4 @@
 ---
-name: "netty_to_serialize"
-type: "netty"
-source:
-  type: "source"
-  nettyEndpoint: true
-sink:
-  type: "sink"
-  sink: true
-  vul: "SERIALIZE"
-depth: 8
-limit: 10
-procedure: "tabby.beta.findPath"
-sourceBlacklists:
-  - "io.netty.handler.codec.serialization.ObjectDecoder#decode"
-  - "io.netty.handler.codec.http.websocketx.WebSocketProtocolHandler#decode"
-  - "io.netty.handler.codec.LengthFieldBasedFrameDecoder#decode"
-  - "io.netty.handler.codec.ByteToMessageDecoder#channelRead"
-  - "io.netty.channel.ChannelInboundHandlerAdapter#channelRead"
-  - "io.netty.handler.codec.ByteToMessageCodec#channelRead"
-  - "io.netty.handler.codec.haproxy.HAProxyMessageDecoder#channelRead"
-  - "io.netty.handler.codec.http2.Http2MultiplexCodec#channelRead"
-  - "io.netty.handler.codec.marshalling.MarshallingDecoder#decode"
-  - "io.netty.handler.codec.dns.TcpDnsResponseDecoder#decode"
-  - "io.netty.handler.codec.dns.TcpDnsQueryDecoder#decode"
-pathBlacklists:
-  - "java.lang.Iterable#iterator"
-  - "java.util.Iterator#hasNext"
-  - "java.util.Map$Entry#getValue"
-  - "java.lang.Object#equals"
-  - "java.lang.Thread#run"
-  - "java.util.Map#put"
-  - "java.util.List#contains"
-  - "java.lang.Iterable#forEach"
----
 name: "web_to_code"
 type: "web"
 source:
@@ -44,7 +10,7 @@ sink:
   vul: "CODE"
 depth: 8
 limit: 10
-procedure: "tabby.beta.findPath"
+procedure: "tabby.algo.findPath"
 sourceBlacklists: []
 pathBlacklists:
   - "java.lang.Iterable#forEach"
@@ -60,7 +26,7 @@ sink:
   vul: "EXEC"
 depth: 8
 limit: 10
-procedure: "tabby.beta.findPath"
+procedure: "tabby.algo.findPath"
 sourceBlacklists: []
 pathBlacklists:
   - "java.lang.Iterable#forEach"
@@ -76,7 +42,7 @@ sink:
   vul: "FILE"
 depth: 8
 limit: 10
-procedure: "tabby.beta.findPath"
+procedure: "tabby.algo.findPath"
 sourceBlacklists: []
 pathBlacklists:
   - "java.io.InputStream#read"
@@ -95,7 +61,7 @@ sink:
   vul: "FILE_WRITE"
 depth: 8
 limit: 10
-procedure: "tabby.beta.findPath"
+procedure: "tabby.algo.findPath"
 sourceBlacklists: []
 pathBlacklists:
   - "java.io.PrintWriter#write"
@@ -115,7 +81,7 @@ sink:
   vul: "SERIALIZE"
 depth: 8
 limit: 10
-procedure: "tabby.beta.findPath"
+procedure: "tabby.algo.findPath"
 sourceBlacklists: []
 pathBlacklists:
   - "java.util.List#contains"
@@ -132,7 +98,7 @@ sink:
   vul: "SQLI"
 depth: 8
 limit: 10
-procedure: "tabby.beta.findPath"
+procedure: "tabby.algo.findPath"
 sourceBlacklists: []
 pathBlacklists:
   - "java.sql.Connection#isClosed"
@@ -149,7 +115,7 @@ sink:
   vul: "SSRF"
 depth: 8
 limit: 10
-procedure: "tabby.beta.findPath"
+procedure: "tabby.algo.findPath"
 sourceBlacklists: []
 pathBlacklists:
   - "java.io.InputStream#read"
@@ -167,7 +133,7 @@ sink:
   vul: "XXE"
 depth: 8
 limit: 10
-procedure: "tabby.beta.findPath"
+procedure: "tabby.algo.findPath"
 sourceBlacklists: []
 pathBlacklists: []
 ---
@@ -182,7 +148,7 @@ sink:
   vul: "JNDI"
 depth: 8
 limit: 10
-procedure: "tabby.beta.findPath"
+procedure: "tabby.algo.findPath"
 sourceBlacklists: []
 pathBlacklists:
   - "java.lang.Iterable#forEach"
