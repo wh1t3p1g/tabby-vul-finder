@@ -41,11 +41,14 @@ public interface MethodRefRepository extends Neo4jRepository<MethodEntity, Strin
 
     @Query("CALL apoc.periodic.iterate(\"CALL apoc.load.csv('file://\"+$path+\"', " +
             "{header:true, mapping:{IS_CALLER_THIS_FIELD_OBJ:{type:'boolean'}} }) YIELD map AS row RETURN row\"," +
-            "\"MATCH ( m1:Method {ID:row.SOURCE} ), " +
-            "( m2:Method {ID:row.TARGET }) " +
+            "\"MATCH ( m1:Method {ID:row.SOURCE} )" +
+            "MATCH ( m2:Method {ID:row.TARGET }) " +
             "MERGE (m1)-[e:CALL {ID:row.ID, LINE_NUM:row.LINE_NUM, " +
-                                "INVOKER_TYPE:row.INVOKER_TYPE, POLLUTED_POSITION:row.POLLUTED_POSITION, " +
-                                "REAL_CALL_TYPE:row.REAL_CALL_TYPE, TYPES:row.TYPES, IS_CALLER_THIS_FIELD_OBJ:row.IS_CALLER_THIS_FIELD_OBJ}]->(m2)\", " +
+            "INVOKER_TYPE:row.INVOKER_TYPE, " +
+            "POLLUTED_POSITION:row.POLLUTED_POSITION, " +
+            "TYPES:row.TYPES, " +
+//            "CONSTANTS:row.CONSTANTS, " +
+            "IS_CALLER_THIS_FIELD_OBJ:row.IS_CALLER_THIS_FIELD_OBJ}]->(m2)\", " +
             "{batchSize:10000, iterateList:true, parallel:false}) yield total")
     void loadCallEdgeFromCSV(String path);
 
