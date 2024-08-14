@@ -1,0 +1,65 @@
+name: "jdk_getter"
+enable: true
+type: "gadget"
+source:
+  type: "source"
+  cypher: "match (source:Method {IS_GETTER:true,CLASSNAME:\"sun.print.PrintServiceLookupProvider\"})"
+sink:
+  type: "sink"
+  sink: true
+  vul: "EXEC"
+depth: 5
+limit: 1
+direct: "-"
+procedure: "tabby.beta.findPath"
+sourceBlacklists: []
+pathBlacklists: []
+---
+name: "jdk_xstream_ImageIO"
+enable: true
+type: "gadget"
+source:
+  type: "source"
+  cypher: "match (source:Method {NAME0:\"javax.naming.ldap.Rdn$RdnEntry#compareTo\"})"
+sink:
+  type: "sink"
+  sink: true
+  name: "invoke"
+depth: 12
+limit: 1
+direct: "-"
+procedure: "tabby.algo.findPath"
+sourceBlacklists:
+  - com.sun.org.apache.xalan.internal.xsltc.compiler.FunctionCall$JavaType#hashCode
+pathBlacklists:
+  - org.jcp.xml.dsig.internal.dom.AbstractDOMSignatureMethod#hashCode
+  - sun.swing.SwingLazyValue#createValue
+  - com.sun.jndi.ldap.ClientId#invokeComparator
+---
+name: "jdk_xstream_SwingLazyValue"
+enable: true
+type: "gadget"
+source:
+  type: "source"
+  cypher: "match (source:Method {NAME:\"compareTo\",CLASSNAME:\"javax.naming.ldap.Rdn$RdnEntry\"})"
+sink:
+  type: "sink"
+  sink: true
+  name: "invoke"
+depth: 12
+limit: 1
+direct: "-"
+procedure: "tabby.algo.findPath"
+sourceBlacklists: []
+pathBlacklists:
+  - com.sun.javafx.css.ParsedValueImpl#equals
+  - java.util.Map$Entry#getValue
+  - java.util.Collection#equals
+  - com.oracle.webservices.internal.api.message.BasePropertySet$Accessor#get
+  - javax.imageio.ImageIO$ContainsFilter#filter
+  - sun.jvm.hotspot.CommandProcessor$13$1#compare
+  - java.security.PrivilegedAction#run
+  - java.util.Comparator#compare
+  - com.sun.jndi.ldap.ClientId#equals
+  - com.sun.java.swing.plaf.gtk.GTKStyle$GTKLazyValue#createValue
+  - java.util.Iterator#hasNext

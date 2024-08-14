@@ -1,0 +1,16 @@
+name: "js_invoke"
+enable: true
+type: "web"
+source:
+  type: "source"
+  endpoint: true
+  classname: "nc.bs.framework.js.servlet.InternalJsInvokeServlet"
+sink:
+  type: "sink"
+  sink: true
+  name: "invoke"
+depth: 8
+limit: 1
+procedure: "tabby.algo.findPath"
+sourceBlacklists: []
+pathBlacklists: []

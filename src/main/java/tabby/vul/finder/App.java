@@ -31,14 +31,15 @@ public class App {
 	private static boolean isFind = false;
 
 	public static void main(String[] args) throws FileNotFoundException {
-		if(args.length == 2 && "query".equals(args[0])){
+		if(args.length == 3 && "query".equals(args[0])){
 			isFind = true;
 			GlobalConfiguration.CYPHER_RESULT_DIRECTORY_PREFIX = args[1];
+			GlobalConfiguration.CYPHER_RULE_PATH = args[2];
 		}else if(args.length == 2 && "load".equals(args[0])){
 			isLoad = true;
 			GlobalConfiguration.OUTPUT_DIRECTORY = args[1];
 		}else{
-			log.error("java -jar tabby-vul-finder.jar query projectName");
+			log.error("java -jar tabby-vul-finder.jar query projectName /path/to/neo4j/cypher/rules.yml");
 			log.error("java -jar tabby-vul-finder.jar load /path/to/load/to/neo4j");
 			return;
 		}
@@ -55,9 +56,9 @@ public class App {
 					loader.load();
 				}
 				if(isFind){
-					if(FileUtils.fileNotExists(GlobalConfiguration.RULES_PATH)){
-						FileUtils.createDirectory(GlobalConfiguration.RULES_PATH);
-					}
+//					if(FileUtils.fileNotExists(GlobalConfiguration.RULES_PATH)){
+//						FileUtils.createDirectory(GlobalConfiguration.RULES_PATH);
+//					}
 					if(FileUtils.fileNotExists(GlobalConfiguration.CYPHER_RESULT_DIRECTORY)){
 						FileUtils.createDirectory(GlobalConfiguration.CYPHER_RESULT_DIRECTORY);
 					}

@@ -17,10 +17,14 @@ public class Cypher {
     private Set<String> sourceBlacklists;
     private Set<String> pathBlacklists;
     private String procedure; // 目前仅支持 tabby.beta.findPath tabby.algo.findPath
+    private String sinkState = null;
+    private String direct = "-";
     private int depth = 8;
     private int limit = 10;
     private String name;
     private String type = "web";
+    private boolean enable = true;
+    private boolean depthFirst = true;
 
     public boolean isWeb(){
         return "web".equals(type);
@@ -50,7 +54,13 @@ public class Cypher {
         if(!pathBlacklists.isEmpty()){
             where = GlobalConfiguration.GSON.toJson(pathBlacklists);
         }
-        sb.append(String.format("call %s(source, \"-\", sink, %d, true) yield path ", procedure, depth));
+
+        if(procedure.endsWith("WithState") && sinkState != null){
+            sb.append(String.format("call %s(source, \"%s\", sink, \"%s\", %d, %s) yield path ", procedure, direct, sinkState, depth, depthFirst));
+        }else{
+            sb.append(String.format("call %s(source, \"%s\", sink, %d, %s) yield path ", procedure, direct, depth, depthFirst));
+        }
+
         if(where != null){
             sb.append(String.format("where none(n in nodes(path) where n.NAME0 in %s)", where));
         }

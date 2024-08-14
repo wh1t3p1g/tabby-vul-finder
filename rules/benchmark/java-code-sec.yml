@@ -1,0 +1,113 @@
+name: "web_to_exec"
+enable: true
+type: "web"
+source:
+  type: "source"
+  endpoint: true
+sink:
+  type: "sink"
+  sink: true
+  vul: "EXEC"
+depth: 8
+limit: 5
+procedure: "tabby.beta.findPath"
+sourceBlacklists: []
+pathBlacklists:
+  - "java.lang.Iterable#forEach"
+  - "java.lang.ClassLoader#findResource"
+  - "java.security.PrivilegedExceptionAction#run"
+---
+name: "web_to_code"
+enable: true
+type: "web"
+source:
+  type: "source"
+  endpoint: true
+sink:
+  type: "sink"
+  sink: true
+  vul: "CODE"
+depth: 8
+limit: 7
+procedure: "tabby.beta.findPath"
+sourceBlacklists: []
+pathBlacklists:
+  - "java.lang.Iterable#forEach"
+  - "java.lang.ClassLoader#findResource"
+  - "java.security.PrivilegedExceptionAction#run"
+---
+name: "web_to_serialize"
+enable: true
+type: "web"
+source:
+  type: "source"
+  endpoint: true
+sink:
+  type: "sink"
+  sink: true
+  vul: "SERIALIZE"
+depth: 8
+limit: 8
+procedure: "tabby.beta.findPath"
+sourceBlacklists: []
+pathBlacklists: []
+---
+name: "web_to_ssrf"
+enable: true
+type: "web"
+source:
+  type: "source"
+  endpoint: true
+sink:
+  type: "sink"
+  sink: true
+  vul: "SSRF"
+depth: 6
+limit: 17
+procedure: "tabby.beta.findPath"
+sourceBlacklists: []
+pathBlacklists:
+  - "java.lang.Iterable#forEach"
+  - "java.lang.ClassLoader#findResource"
+  - "java.security.PrivilegedExceptionAction#run"
+---
+name: "web_to_xxe"
+enable: true
+type: "web"
+source:
+  type: "source"
+  endpoint: true
+sink:
+  type: "sink"
+  sink: true
+  vul: "XXE"
+depth: 6
+limit: 19
+direct: ">"
+procedure: "tabby.beta.findPath"
+sourceBlacklists: []
+pathBlacklists:
+  - "java.lang.Iterable#forEach"
+  - "java.lang.ClassLoader#findResource"
+  - "java.security.PrivilegedExceptionAction#run"
+  - com.thoughtworks.xstream.XStream#fromXML
+---
+name: "web_to_jndi"
+enable: true
+type: "web"
+source:
+  type: "source"
+  endpoint: true
+sink:
+  type: "sink"
+  sink: true
+  vul: "JNDI"
+depth: 6
+limit: 5
+direct: ">"
+procedure: "tabby.beta.findPath"
+sourceBlacklists: []
+pathBlacklists:
+  - "java.lang.Iterable#forEach"
+  - "java.lang.ClassLoader#findResource"
+  - "java.security.PrivilegedExceptionAction#run"

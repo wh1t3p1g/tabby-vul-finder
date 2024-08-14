@@ -103,9 +103,10 @@ public class Finder {
             }
 
             for(Cypher cypher:cyphers){
+                if(!cypher.isEnable()) continue;
                 try{
                     cypher.applyRuleSourceBlacklists();
-                    String filepath = String.join(File.separator, output, cypher.getName()+"_result.txt");
+                    String filepath = String.join(File.separator, output, cypher.getName()+"_result.cypher");
                     try(FileOutputStream fos = new FileOutputStream(filepath)){
                         if(cypher.isWeb()){
                             cypher.addAllBlacklistToSource(GLOBAL_WEB_BLACKLIST);
@@ -115,10 +116,17 @@ public class Finder {
                         for(int i=0; i < limit; i++){
                             String currentCypher = cypher.toString();
                             log.debug(currentCypher);
-                            List<PathValue> result = methodRefRepository.execute(currentCypher);
+                            List<PathValue> result = new ArrayList<>();
+
+                            try{
+                                result = methodRefRepository.execute(currentCypher);
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }
+
                             if(!result.isEmpty()){
                                 Path path = result.get(0).asPath();
-                                String head = output(path, fos);
+                                String head = output(path, cypher.getDirect(), fos);
                                 if(head != null){
                                     cypher.addBlacklistToSource(head);
                                     cypher.getPathBlacklists().add(head);
@@ -139,37 +147,113 @@ public class Finder {
         }
     }
 
-    public String output(Path path, OutputStream os) throws IOException {
+    public String output(Path path, String direct, OutputStream os) throws IOException {
         StringBuilder sb = new StringBuilder();
-        Iterator iterator = path.iterator();
+        Iterator<Path.Segment> iterator = path.iterator();
         String ret = null;
         Node startNode = null;
         Node endNode = null;
+        List<String> nodes = new LinkedList<>();
         do{
-            Path.Segment segment = (Path.Segment) iterator.next();
+            Path.Segment segment =  iterator.next();
             startNode = segment.start();
             Relationship relationship = segment.relationship();
             endNode = segment.end();
-            String startNodeName0 = startNode.get("NAME0").asString();
             if(ret == null){
-                ret = startNodeName0;
+                ret = startNode.get("NAME0").asString();
             }
-            sb.append(startNodeName0);
-            if("CALL".equals(relationship.type())){
-                sb.append("\n -[CALL]-> ");
-            }else{
-                sb.append(" -[ALIAS]-> ");
+
+            if(startNode != null){
+                nodes.add(startNode.get("NAME0").asString());
+            }
+
+            if(relationship != null){
+                if("CALL".equals(relationship.type())){
+                    nodes.add("[CALL]");
+                }else{
+                    nodes.add("[ALIAS]");
+                }
             }
         }while (iterator.hasNext());
 
         if(endNode != null){
-            sb.append(endNode.get("NAME0").asString());
+            nodes.add(endNode.get("NAME0").asString());
+        }
+
+        int length = nodes.size();
+        sb.append("/*\n");
+        if("<".equals(direct)){
+            for(int i=length-1;i>=0;i--){
+                String node = nodes.get(i);
+                if(node.equals("[CALL]")){
+                    sb.append(String.format("\n -%s-> ", node));
+                } else if(node.equals("[ALIAS]")){
+                    sb.append(String.format(" -%s-> ", node));
+                }else{
+                    sb.append(node);
+                }
+            }
+        }else{
+            for(int i=0;i<length;i++){
+                String node = nodes.get(i);
+                if(node.equals("[CALL]")){
+                    sb.append(String.format("\n -%s-> ", node));
+                } else if(node.equals("[ALIAS]")){
+                    sb.append(String.format(" -%s-> ", node));
+                }else{
+                    sb.append(node);
+                }
+            }
         }
 
         sb.append("\n");
         log.debug(sb.toString());
-        sb.append("\n");
+        sb.append("*/\n");
         os.write(sb.toString().getBytes());
+
+        generate(nodes, direct, os);
         return ret;
     }
+
+    public void generate(List<String> nodes, String direct, OutputStream os) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        int length = nodes.size();
+        if("<".equals(direct)){
+            for(int i=length-1;i>=0;i--){
+                String node = nodes.get(i);
+                if(node.equals("[CALL]")){
+                    sb.append(" -[:CALL]-> ");
+                } else if(node.equals("[ALIAS]")){
+                    sb.append(" -[:ALIAS]-> ");
+                }else{
+                    if(length-1 == i){
+                        sb.append(String.format("match path=(m%d:Method {NAME0:\"%s\"})\n", i, node));
+                    }else{
+                        sb.append(String.format("(m%d:Method {NAME0:\"%s\"})\n", i, node));
+                    }
+                }
+            }
+        }else{
+            for(int i=0;i<length;i++){
+                String node = nodes.get(i);
+                if(node.equals("[CALL]")){
+                    sb.append(" -[:CALL]-> ");
+                } else if(node.equals("[ALIAS]")){
+                    sb.append(" -[:ALIAS]-> ");
+                }else{
+                    if(0 == i){
+                        sb.append(String.format("match path=(m%d:Method {NAME0:\"%s\"}) \n", i, node));
+                    }else{
+                        sb.append(String.format("(m%d:Method {NAME0:\"%s\"}) \n", i, node));
+                    }
+                }
+            }
+        }
+        sb.append("return path");
+        log.debug(sb.toString());
+        sb.append("\n");
+        sb.append("\n");
+        os.write(sb.toString().getBytes());
+    }
+
 }

@@ -13,6 +13,7 @@ import java.util.Set;
 @Data
 public class NodeCypher {
 
+    private String cypher = null;
     private String name = null;
     private String name0 = null;
     private String classname = null;
@@ -89,16 +90,24 @@ public class NodeCypher {
         }
 
         StringBuilder sb = new StringBuilder();
-
-        sb.append(String.format("match (%s:Method ", type));
-        if(properties != null){
-            sb.append("{");
-            sb.append(properties);
-            sb.append("}");
+        if(cypher != null && !cypher.isEmpty()){
+            sb.append(cypher).append(" ");
+        }else{
+            sb.append(String.format("match (%s:Method ", type));
+            if(properties != null){
+                sb.append("{");
+                sb.append(properties);
+                sb.append("}");
+            }
+            sb.append(") ");
         }
-        sb.append(") ");
+
         if(where != null){
-            sb.append(String.format("where not(%s.NAME0 in ", type));
+            if(cypher != null && cypher.toLowerCase().contains(" where ")){
+                sb.append(String.format(" and not(%s.NAME0 in ", type));
+            }else{
+                sb.append(String.format("where not(%s.NAME0 in ", type));
+            }
             sb.append(where);
             sb.append(")");
         }

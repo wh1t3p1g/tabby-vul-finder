@@ -1,0 +1,67 @@
+name: "commons_collections_cc3"
+enable: true
+type: "gadget"
+source:
+  type: "source"
+  cypher: "match (source:Method {NAME:\"readObject\",CLASSNAME:\"java.util.HashSet\"})"
+sink:
+  type: "sink"
+  sink: true
+  name: "invoke"
+depth: 10
+limit: 1
+direct: "<"
+procedure: "tabby.algo.findJavaGadget"
+sourceBlacklists: []
+pathBlacklists:
+  - rx.schedulers.TimeInterval#hashCode
+  - org.apache.commons.collections4.bag.AbstractMapBag#equals
+  - org.springframework.test.context.MergedContextConfiguration#hashCode
+  - org.hibernate.validator.internal.util.annotationfactory.AnnotationProxy#getAnnotationMemberValue
+  - java.lang.String#valueOf
+  - org.apache.tomcat.jdbc.pool.PoolProperties#toString
+  - org.apache.commons.collections.bag.AbstractMapBag#getCount
+---
+name: "commons_collections_cc6"
+enable: true
+type: "gadget"
+source:
+  type: "source"
+  cypher: "match (source:Method {NAME:\"readObject\",CLASSNAME:\"java.util.Hashtable\"})"
+sink:
+  type: "sink"
+  sink: true
+  name: "invoke"
+depth: 10
+limit: 1
+direct: "<"
+procedure: "tabby.algo.findJavaGadget"
+sourceBlacklists: []
+pathBlacklists:
+  - org.apache.commons.lang.enums.Enum#equals
+  - java.util.Iterator#hasNext
+  - org.apache.commons.collections.functors.SwitchTransformer#transform
+  - java.security.Provider#readObject
+  - org.apache.commons.collections.list.AbstractLinkedList#equals
+  - org.apache.commons.collections.SequencedHashMap#equals
+---
+name: "commons_beanutils_cb1"
+enable: true
+type: "gadget"
+source:
+  type: "source"
+  cypher: "match (source:Method {NAME:\"compare\",CLASSNAME:\"org.apache.commons.beanutils.BeanComparator\"})"
+sink:
+  type: "sink"
+  sink: true
+  name: "invoke"
+depth: 10
+limit: 1
+direct: ">"
+procedure: "tabby.algo.findPath"
+sourceBlacklists: []
+pathBlacklists:
+  - com.sun.java.util.jar.pack.PackageWriter$2#compare
+  - org.apache.commons.beanutils.BeanComparator#internalCompare
+  - org.apache.commons.beanutils.BeanMap#get
+  - org.apache.commons.collections.BeanMap#get

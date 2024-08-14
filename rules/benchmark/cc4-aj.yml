@@ -1,0 +1,64 @@
+name: "commons_collections4_cc2"
+enable: false
+type: "gadget"
+source:
+  type: "source"
+  cypher: "match (source:Method {NAME:\"readObject\",CLASSNAME:\"java.util.PriorityQueue\"})"
+sink:
+  type: "sink"
+  sink: true
+  name: "invoke"
+depth: 8
+limit: 1
+direct: "<"
+depthFirst: false
+procedure: "tabby.algo.findPath"
+sourceBlacklists: []
+pathBlacklists:
+  - java.io.ObjectInputStream#defaultReadObject
+  - java.io.ObjectInputStream#readObject
+---
+name: "commons_collections4_cc4"
+enable: false
+type: "gadget"
+source:
+  type: "source"
+  cypher: "match (source:Method {NAME:\"readObject\",CLASSNAME:\"org.apache.commons.collections4.bag.TreeBag\"})"
+sink:
+  type: "sink"
+  sink: true
+  name: "invoke"
+depth: 9
+limit: 1
+direct: "<"
+depthFirst: false
+procedure: "tabby.algo.findPath"
+sourceBlacklists: []
+pathBlacklists:
+  - org.aspectj.weaver.tools.cache.SimpleCache$StoreableCachingMap#put
+  - com.oracle.webservices.internal.api.message.BasePropertySet$MapView#put
+  - com.oracle.webservices.internal.api.message.BasePropertySet$MethodAccessor#set
+  - java.util.concurrent.ConcurrentHashMap#putVal
+  - com.sun.jndi.ldap.ClientId#invokeComparator
+  - javax.imageio.ImageIO$ContainsFilter#filter
+  - java.io.ObjectInputStream#defaultReadObject
+  - java.io.ObjectInputStream#readObject
+---
+name: "aspectjweaver_aj1"
+enable: false
+type: "gadget"
+source:
+  type: "source"
+  cypher: "match (source:Method {NAME:\"readObject\",CLASSNAME:\"java.util.HashSet\"})"
+sink:
+  type: "sink"
+  sink: true
+  vul: "FILE_WRITE"
+depth: 13
+limit: 1
+direct: "<"
+depthFirst: true
+procedure: "tabby.algo.findJavaGadget"
+sourceBlacklists: []
+pathBlacklists:
+  - java.util.HashMap#putVal

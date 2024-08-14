@@ -15,7 +15,7 @@ import java.util.Properties;
 @Slf4j
 public class GlobalConfiguration {
 
-    public static String CONFIG_FILE_PATH = String.join(File.separator, System.getProperty("user.dir"), "config", "db.properties");
+    public static String CONFIG_FILE_PATH;
     public static String CLASSES_CACHE_PATH;
     public static String METHODS_CACHE_PATH;
     public static String CALL_RELATIONSHIP_CACHE_PATH;
@@ -35,6 +35,16 @@ public class GlobalConfiguration {
     public static boolean IS_DOCKER_IMPORT_PATH = false;
 
     public static Gson GSON = new GsonBuilder().disableHtmlEscaping().create();
+
+    static {
+        CONFIG_FILE_PATH = String.join(File.separator, System.getProperty("user.dir"), "config", "db.properties");
+        if(FileUtils.fileNotExists(CONFIG_FILE_PATH)) {
+            String tabbyHome = System.getenv("TABBY_HOME");
+            if(tabbyHome != null) {
+                CONFIG_FILE_PATH = String.join(File.separator, tabbyHome, "config", "db.properties");
+            }
+        }
+    }
 
     public static void initConfig(boolean isLoad, boolean isFind) throws FileNotFoundException {
         Properties props = new Properties();
@@ -71,6 +81,7 @@ public class GlobalConfiguration {
         INTERFACE_RELATIONSHIP_CACHE_PATH = String.join(File.separator,OUTPUT_DIRECTORY, "GRAPHDB_PUBLIC_INTERFACES.csv");
 
         if(isFind){
+            CYPHER_RULE_PATH = FileUtils.getRealPath(CYPHER_RULE_PATH);
             FileUtils.fileNotExistsWithException(CYPHER_RULE_PATH);
         }
 
