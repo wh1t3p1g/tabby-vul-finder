@@ -113,6 +113,7 @@ public class Finder {
                         }
                         int count = 0;
                         int limit = cypher.getLimit();
+                        log.info("Start cypher {}.", cypher.getName());
                         for(int i=0; i < limit; i++){
                             String currentCypher = cypher.toString();
                             log.debug(currentCypher);
