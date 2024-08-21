@@ -113,7 +113,7 @@ public class Finder {
                         }
                         int count = 0;
                         int limit = cypher.getLimit();
-                        log.info("Start cypher {}.", cypher.getName());
+                        log.info("Start Cypher {}.", cypher.getName());
                         for(int i=0; i < limit; i++){
                             String currentCypher = cypher.toString();
                             log.debug(currentCypher);
@@ -128,6 +128,7 @@ public class Finder {
                             if(!result.isEmpty()){
                                 Path path = result.get(0).asPath();
                                 String head = output(path, cypher.getDirect(), fos);
+                                log.info("<{}> Found {}", cypher.getName(), head);
                                 if(head != null){
                                     cypher.addBlacklistToSource(head);
                                     cypher.getPathBlacklists().add(head);
