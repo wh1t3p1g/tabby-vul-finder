@@ -70,13 +70,12 @@ public class GlobalConfiguration {
             OUTPUT_DIRECTORY = CSV_PATH;
         }
 
-        if(!FileUtils.fileExists(OUTPUT_DIRECTORY)){
-            FileUtils.createDirectory(OUTPUT_DIRECTORY);
-            OUTPUT_DIRECTORY = FileUtils.getRealPath(OUTPUT_DIRECTORY);
-        }else{
+        if(!IS_DOCKER_IMPORT_PATH){
+            if(!FileUtils.fileExists(OUTPUT_DIRECTORY)){
+                FileUtils.createDirectory(OUTPUT_DIRECTORY);
+            }
             OUTPUT_DIRECTORY = FileUtils.getRealPath(OUTPUT_DIRECTORY);
         }
-
         // resolve cache directory
         CLASSES_CACHE_PATH = String.join(File.separator,OUTPUT_DIRECTORY, "GRAPHDB_PUBLIC_CLASSES.csv");
         METHODS_CACHE_PATH = String.join(File.separator,OUTPUT_DIRECTORY, "GRAPHDB_PUBLIC_METHODS.csv");
