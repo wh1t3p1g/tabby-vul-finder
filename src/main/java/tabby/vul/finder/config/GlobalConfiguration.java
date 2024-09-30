@@ -33,6 +33,8 @@ public class GlobalConfiguration {
     public static String NEO4J_PASSWORD = null;
     public static String NEO4J_URL = null;
     public static boolean IS_DOCKER_IMPORT_PATH = false;
+    public static String CSV_PATH = "";
+
 
     public static Gson GSON = new GsonBuilder().disableHtmlEscaping().create();
 
@@ -63,8 +65,12 @@ public class GlobalConfiguration {
         IS_DOCKER_IMPORT_PATH = getBooleanProperty("tabby.cache.isDockerImportPath", "false", props);
 
         if(IS_DOCKER_IMPORT_PATH){
-            OUTPUT_DIRECTORY = "/var/lib/neo4j/import";
-        }else if(!FileUtils.fileExists(OUTPUT_DIRECTORY)){
+            OUTPUT_DIRECTORY = String.join(File.separator, "/var/lib/neo4j/import", CSV_PATH);
+        }else{
+            OUTPUT_DIRECTORY = CSV_PATH;
+        }
+
+        if(!FileUtils.fileExists(OUTPUT_DIRECTORY)){
             FileUtils.createDirectory(OUTPUT_DIRECTORY);
             OUTPUT_DIRECTORY = FileUtils.getRealPath(OUTPUT_DIRECTORY);
         }else{

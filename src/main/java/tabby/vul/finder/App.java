@@ -37,7 +37,7 @@ public class App {
 			GlobalConfiguration.CYPHER_RULE_PATH = args[2];
 		}else if(args.length == 2 && "load".equals(args[0])){
 			isLoad = true;
-			GlobalConfiguration.OUTPUT_DIRECTORY = args[1];
+			GlobalConfiguration.CSV_PATH = args[1];
 		}else{
 			log.error("java -jar tabby-vul-finder.jar query projectName /path/to/neo4j/cypher/rules.yml");
 			log.error("java -jar tabby-vul-finder.jar load /path/to/load/to/neo4j");
