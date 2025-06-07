@@ -1,5 +1,7 @@
 package tabby.vul.finder;
 
+import com.beust.jcommander.JCommander;
+import com.beust.jcommander.Parameter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -31,18 +33,29 @@ public class App {
 	private static boolean isFind = false;
 
 	public static void main(String[] args) throws FileNotFoundException {
-		if(args.length == 3 && "query".equals(args[0])){
+		Command command = new Command();
+		JCommander.newBuilder()
+				.addObject(command)
+				.build()
+				.parse(args);
+
+		if(command.query){
 			isFind = true;
-			GlobalConfiguration.CYPHER_RESULT_DIRECTORY_PREFIX = args[1];
-			GlobalConfiguration.CYPHER_RULE_PATH = args[2];
-		}else if(args.length == 2 && "load".equals(args[0])){
+			GlobalConfiguration.CYPHER_RESULT_DIRECTORY_PREFIX = command.prefix;
+			GlobalConfiguration.CYPHER_RULE_PATH = command.cypher;
+		}else if(command.isLoad()){
 			isLoad = true;
-			GlobalConfiguration.CSV_PATH = args[1];
+			GlobalConfiguration.CSV_PATH = command.csvFilePath;
 		}else{
-			log.error("java -jar tabby-vul-finder.jar query projectName /path/to/neo4j/cypher/rules.yml");
-			log.error("java -jar tabby-vul-finder.jar load /path/to/load/to/neo4j");
+			command.printHelp();
 			return;
 		}
+
+		if(command.configFilePath != null){
+			GlobalConfiguration.CONFIG_FILE_PATH = command.configFilePath;
+		}
+
+		GlobalConfiguration.init();
 		GlobalConfiguration.initConfig(isLoad, isFind);
 		SpringApplication.run(App.class, args).close();
 	}
@@ -56,9 +69,6 @@ public class App {
 					loader.load();
 				}
 				if(isFind){
-//					if(FileUtils.fileNotExists(GlobalConfiguration.RULES_PATH)){
-//						FileUtils.createDirectory(GlobalConfiguration.RULES_PATH);
-//					}
 					if(FileUtils.fileNotExists(GlobalConfiguration.CYPHER_RESULT_DIRECTORY)){
 						FileUtils.createDirectory(GlobalConfiguration.CYPHER_RESULT_DIRECTORY);
 					}
@@ -69,5 +79,37 @@ public class App {
 			}
 			log.info("Done. Bye!");
 		};
+	}
+
+	@Slf4j
+	static final class Command {
+
+		@Parameter(names = {"--prefix", "-p"}, description = "可选，结果目录前缀，无特殊意义，可任意指定。")
+		public String prefix = "result";
+
+		@Parameter(names = {"--query", "-q"}, description = "指代当前为查询模式。")
+		public boolean query = false;
+
+		@Parameter(names = {"--cypher", "-c"}, description = "当查询模式时，需要提供对应的cypher规则文件路径。")
+		public String cypher = null;
+
+		@Parameter(names={"--config"}, description = "数据库配置文件地址。")
+		public String configFilePath = null;
+
+		@Parameter(names={"--load", "-l"}, description = "导入csv文件到图数据库中。")
+		public String csvFilePath = null;
+
+		@Parameter(names={"--help", "-h"})
+		public boolean help = false;
+
+		public boolean isLoad(){
+			return csvFilePath != null;
+		}
+
+		public void printHelp(){
+			log.error("You can try following commands:");
+			log.error("java -jar tabby-vul-finder.jar -q --prefix projectName --cypher /path/to/neo4j/cypher/rules.yml --config /path/to/db.properties");
+			log.error("java -jar tabby-vul-finder.jar --load /path/to/load/to/neo4j --config /path/to/db.properties");
+		}
 	}
 }

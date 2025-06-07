@@ -27,8 +27,7 @@ public class GlobalConfiguration {
     public static String OUTPUT_DIRECTORY = "";
     public static String CYPHER_RESULT_DIRECTORY_PREFIX = "result";
     public static String CYPHER_RESULT_DIRECTORY = String.join(File.separator, System.getProperty("user.dir"), "result");
-    public static String RULES_PATH = String.join(File.separator, System.getProperty("user.dir"), "rules");
-    public static String CYPHER_RULE_PATH = String.join(File.separator, RULES_PATH, "cyphers.yml");
+    public static String CYPHER_RULE_PATH = null;
     public static String NEO4J_USERNAME = null;
     public static String NEO4J_PASSWORD = null;
     public static String NEO4J_URL = null;
@@ -38,14 +37,22 @@ public class GlobalConfiguration {
 
     public static Gson GSON = new GsonBuilder().disableHtmlEscaping().create();
 
-    static {
-        CONFIG_FILE_PATH = String.join(File.separator, System.getProperty("user.dir"), "config", "db.properties");
-        if(FileUtils.fileNotExists(CONFIG_FILE_PATH)) {
-            String tabbyHome = System.getenv("TABBY_HOME");
-            if(tabbyHome != null) {
-                CONFIG_FILE_PATH = String.join(File.separator, tabbyHome, "config", "db.properties");
+    public static void init() {
+        if (CONFIG_FILE_PATH == null) {
+            CONFIG_FILE_PATH = String.join(File.separator, System.getProperty("user.dir"), "config", "db.properties");
+            if(FileUtils.fileNotExists(CONFIG_FILE_PATH)) {
+                String tabbyHome = System.getenv("TABBY_HOME");
+                if(tabbyHome != null) {
+                    CONFIG_FILE_PATH = String.join(File.separator, tabbyHome, "config", "db.properties");
+                }
+            }
+        }else{
+            if(FileUtils.fileNotExists(CONFIG_FILE_PATH)) {
+                log.error(CONFIG_FILE_PATH+" not found!");
+                System.exit(0);
             }
         }
+
     }
 
     public static void initConfig(boolean isLoad, boolean isFind) throws FileNotFoundException {
@@ -56,7 +63,6 @@ public class GlobalConfiguration {
         } catch (IOException e) {
             throw new FileNotFoundException(CONFIG_FILE_PATH + " not found.");
         }
-
         // apply to GlobalConfiguration
         NEO4J_USERNAME = getProperty("tabby.neo4j.username", "neo4j", props);
         NEO4J_PASSWORD = getProperty("tabby.neo4j.password", "neo4j", props);
