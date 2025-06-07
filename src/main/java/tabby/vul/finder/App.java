@@ -39,10 +39,10 @@ public class App {
 				.build()
 				.parse(args);
 
-		if(command.query){
+		if(command.isQuery()){
 			isFind = true;
 			GlobalConfiguration.CYPHER_RESULT_DIRECTORY_PREFIX = command.prefix;
-			GlobalConfiguration.CYPHER_RULE_PATH = command.cypher;
+			GlobalConfiguration.CYPHER_RULE_PATH = command.queryRulePath;
 		}else if(command.isLoad()){
 			isLoad = true;
 			GlobalConfiguration.CSV_PATH = command.csvFilePath;
@@ -87,11 +87,8 @@ public class App {
 		@Parameter(names = {"--prefix", "-p"}, description = "可选，结果目录前缀，无特殊意义，可任意指定。")
 		public String prefix = "result";
 
-		@Parameter(names = {"--query", "-q"}, description = "指代当前为查询模式。")
-		public boolean query = false;
-
-		@Parameter(names = {"--cypher", "-c"}, description = "当查询模式时，需要提供对应的cypher规则文件路径。")
-		public String cypher = null;
+		@Parameter(names = {"--query", "-q"}, description = "指代当前为查询模式，提供对应的cypher规则文件路径。")
+		public String queryRulePath = null;
 
 		@Parameter(names={"--config"}, description = "数据库配置文件地址。")
 		public String configFilePath = null;
@@ -106,9 +103,13 @@ public class App {
 			return csvFilePath != null;
 		}
 
+		public boolean isQuery(){
+			return queryRulePath != null;
+		}
+
 		public void printHelp(){
 			log.error("You can try following commands:");
-			log.error("java -jar tabby-vul-finder.jar -q --prefix projectName --cypher /path/to/neo4j/cypher/rules.yml --config /path/to/db.properties");
+			log.error("java -jar tabby-vul-finder.jar --query /path/to/neo4j/cypher/rules.yml --prefix projectName --config /path/to/db.properties");
 			log.error("java -jar tabby-vul-finder.jar --load /path/to/load/to/neo4j --config /path/to/db.properties");
 		}
 	}
