@@ -43,6 +43,9 @@ public class App {
 			isFind = true;
 			GlobalConfiguration.CYPHER_RESULT_DIRECTORY_PREFIX = command.prefix;
 			GlobalConfiguration.CYPHER_RULE_PATH = command.queryRulePath;
+			if(command.output != null){
+				GlobalConfiguration.CYPHER_RESULT_DIRECTORY = command.output;
+			}
 		}else if(command.isLoad()){
 			isLoad = true;
 			GlobalConfiguration.CSV_PATH = command.csvFilePath;
@@ -92,6 +95,9 @@ public class App {
 
 		@Parameter(names={"--config"}, description = "数据库配置文件地址。")
 		public String configFilePath = null;
+
+		@Parameter(names={"--output", "-o"}, description = "结果输出目录")
+		public String output = null;
 
 		@Parameter(names={"--load", "-l"}, description = "导入csv文件到图数据库中。")
 		public String csvFilePath = null;
