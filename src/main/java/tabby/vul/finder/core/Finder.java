@@ -29,39 +29,10 @@ import java.util.*;
 @Component
 public class Finder {
 
-
     @Autowired
     private MethodRefRepository methodRefRepository;
 
     private String output;
-
-    private static Set<String> GLOBAL_WEB_BLACKLIST
-            = new HashSet<>(Arrays.asList(
-            "org.apache.catalina.servlets.CGIServlet#doGet",
-            "org.apache.catalina.manager.ManagerServlet#doGet",
-            "org.apache.catalina.manager.host.HostManagerServlet#doGet",
-            "org.apache.catalina.servlets.DefaultServlet#doPost",
-            "org.apache.catalina.servlets.WebdavServlet#service",
-            "org.apache.catalina.servlets.DefaultServlet#service",
-            "org.apache.catalina.servlets.DefaultServlet#doHead",
-            "org.apache.catalina.servlets.CGIServlet#service",
-            "org.apache.catalina.servlets.DefaultServlet#doGet",
-            "com.caucho.burlap.server.BurlapServlet#service",
-            "com.caucho.hessian.server.HessianServlet#service",
-            "org.apache.catalina.servlets.DefaultServlet#doPut",
-            "org.apache.catalina.manager.HTMLManagerServlet#doPost",
-            "org.apache.catalina.servlets.WebdavServlet#doPut",
-            "org.apache.catalina.manager.ManagerServlet#doPut",
-            "org.apache.catalina.manager.HTMLManagerServlet#doGet",
-            "org.apache.catalina.servlets.WebdavServlet#doDelete",
-            "org.apache.catalina.servlets.DefaultServlet#doDelete",
-            "javax.servlet.http.HttpServlet#service",
-            "javax.servlet.http.HttpServlet#doHead",
-            "javax.servlet.http.HttpServlet#doGet",
-            "javax.servlet.http.HttpServlet#doPost",
-            "javax.servlet.http.HttpServlet#doPut",
-            "org.apache.catalina.manager.host.HTMLHostManagerServlet#doPost"
-    ));
 
     public void init(){
         LocalDateTime current = LocalDateTime.now();
@@ -102,6 +73,8 @@ public class Finder {
                 return;
             }
 
+            Set<String> globalWebSourceBlacklist = new HashSet<>(Arrays.asList(GlobalConfiguration.CYPHER_WEB_SOURCE_BLACKLIST));
+            Set<String> globalWebPathBlacklist = new HashSet<>(Arrays.asList(GlobalConfiguration.CYPHER_WEB_PATH_BLACKLIST));
             for(Cypher cypher:cyphers){
                 if(!cypher.isEnable()) continue;
                 try{
@@ -109,7 +82,8 @@ public class Finder {
                     String filepath = String.join(File.separator, output, cypher.getName()+"_result.cypher");
                     try(FileOutputStream fos = new FileOutputStream(filepath)){
                         if(cypher.isWeb()){
-                            cypher.addAllBlacklistToSource(GLOBAL_WEB_BLACKLIST);
+                            cypher.addAllBlacklistToSource(globalWebSourceBlacklist);
+                            cypher.getPathBlacklists().addAll(globalWebPathBlacklist);
                         }
                         int count = 0;
                         int limit = cypher.getLimit();

@@ -28,6 +28,8 @@ public class GlobalConfiguration {
     public static String CYPHER_RESULT_DIRECTORY_PREFIX = "result";
     public static String CYPHER_RESULT_DIRECTORY = String.join(File.separator, System.getProperty("user.dir"), "result");
     public static String CYPHER_RULE_PATH = null;
+    public static String[] CYPHER_WEB_PATH_BLACKLIST = new String[0];
+    public static String[] CYPHER_WEB_SOURCE_BLACKLIST = new String[0];
     public static String NEO4J_USERNAME = null;
     public static String NEO4J_PASSWORD = null;
     public static String NEO4J_URL = null;
@@ -90,6 +92,9 @@ public class GlobalConfiguration {
         EXTEND_RELATIONSHIP_CACHE_PATH = String.join(File.separator,OUTPUT_DIRECTORY, "GRAPHDB_PUBLIC_EXTEND.csv");
         HAS_RELATIONSHIP_CACHE_PATH = String.join(File.separator,OUTPUT_DIRECTORY, "GRAPHDB_PUBLIC_HAS.csv");
         INTERFACE_RELATIONSHIP_CACHE_PATH = String.join(File.separator,OUTPUT_DIRECTORY, "GRAPHDB_PUBLIC_INTERFACES.csv");
+
+        CYPHER_WEB_PATH_BLACKLIST = getProperty("tabby.cypher.web.path.blacklist", "", props).split(",");
+        CYPHER_WEB_SOURCE_BLACKLIST = getProperty("tabby.cypher.web.source.blacklist", "", props).split(",");
 
         if(isFind){
             CYPHER_RULE_PATH = FileUtils.getRealPath(CYPHER_RULE_PATH);
