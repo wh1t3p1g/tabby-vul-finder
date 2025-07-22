@@ -150,8 +150,11 @@ public class Finder {
         }
 
         // 更新already_found.json内容
-        String alreadyFoundFilepath = String.join(File.separator, GlobalConfiguration.CYPHER_RESULT_DIRECTORY, "already_found.json");
-        FileUtils.writeJsonContent(alreadyFoundFilepath, alreadyFound);
+        if(!GlobalConfiguration.NO_UPDATE_FOUND){
+            String alreadyFoundFilepath = String.join(File.separator, GlobalConfiguration.CYPHER_RESULT_DIRECTORY, "already_found.json");
+            FileUtils.writeJsonContent(alreadyFoundFilepath, alreadyFound);
+        }
+
     }
 
     public String output(Path path, String direct, OutputStream os) throws IOException {

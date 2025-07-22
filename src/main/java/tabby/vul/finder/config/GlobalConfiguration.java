@@ -36,6 +36,7 @@ public class GlobalConfiguration {
     public static boolean IS_DOCKER_IMPORT_PATH = false;
     public static String CSV_PATH = "";
     public static boolean SHOW = false;
+    public static boolean NO_UPDATE_FOUND = false;
 
 
     public static Gson GSON = new GsonBuilder().disableHtmlEscaping().create();

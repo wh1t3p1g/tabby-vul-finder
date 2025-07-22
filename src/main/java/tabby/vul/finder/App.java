@@ -40,6 +40,7 @@ public class App {
 				.parse(args);
 
 		GlobalConfiguration.SHOW = command.show;
+		GlobalConfiguration.NO_UPDATE_FOUND = command.noUpdateFound;
 
 		if(command.isQuery()){
 			isFind = true;
@@ -109,6 +110,9 @@ public class App {
 
 		@Parameter(names={"-v"})
 		public boolean show = false;
+
+		@Parameter(names={"--no-update"})
+		public boolean noUpdateFound = false;
 
 		public boolean isLoad(){
 			return csvFilePath != null;
