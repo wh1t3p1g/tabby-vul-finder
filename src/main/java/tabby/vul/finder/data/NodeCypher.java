@@ -85,6 +85,7 @@ public class NodeCypher {
         }
 
         String where = null;
+        blacklists.remove("");
         if(blacklists.size() > 0){
             where = GlobalConfiguration.GSON.toJson(blacklists);
         }

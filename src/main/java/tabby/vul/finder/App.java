@@ -39,6 +39,8 @@ public class App {
 				.build()
 				.parse(args);
 
+		GlobalConfiguration.SHOW = command.show;
+
 		if(command.isQuery()){
 			isFind = true;
 			GlobalConfiguration.CYPHER_RESULT_DIRECTORY_PREFIX = command.prefix;
@@ -104,6 +106,9 @@ public class App {
 
 		@Parameter(names={"--help", "-h"})
 		public boolean help = false;
+
+		@Parameter(names={"-v"})
+		public boolean show = false;
 
 		public boolean isLoad(){
 			return csvFilePath != null;

@@ -35,6 +35,7 @@ public class GlobalConfiguration {
     public static String NEO4J_URL = null;
     public static boolean IS_DOCKER_IMPORT_PATH = false;
     public static String CSV_PATH = "";
+    public static boolean SHOW = false;
 
 
     public static Gson GSON = new GsonBuilder().disableHtmlEscaping().create();

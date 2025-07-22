@@ -24,7 +24,7 @@ public class Cypher {
     private String name;
     private String type = "web";
     private boolean enable = true;
-    private boolean depthFirst = true;
+    private boolean depthFirst = false;
 
     public boolean isWeb(){
         return "web".equals(type);
@@ -51,6 +51,7 @@ public class Cypher {
         sb.append(source);
         sb.append(sink);
         String where = null;
+        pathBlacklists.remove("");
         if(!pathBlacklists.isEmpty()){
             where = GlobalConfiguration.GSON.toJson(pathBlacklists);
         }
@@ -61,7 +62,7 @@ public class Cypher {
             sb.append(String.format("call %s(source, \"%s\", sink, %d, %s) yield path ", procedure, direct, depth, depthFirst));
         }
 
-        if(where != null){
+        if(where != null && !where.isEmpty()){
             sb.append(String.format("where none(n in nodes(path) where n.NAME0 in %s)", where));
         }
         sb.append("\n");

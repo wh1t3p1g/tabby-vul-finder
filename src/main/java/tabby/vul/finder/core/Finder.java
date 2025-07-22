@@ -1,5 +1,6 @@
 package tabby.vul.finder.core;
 
+import com.google.gson.reflect.TypeToken;
 import lombok.extern.slf4j.Slf4j;
 import org.neo4j.driver.internal.value.PathValue;
 import org.neo4j.driver.types.Node;
@@ -16,6 +17,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -33,6 +35,7 @@ public class Finder {
     private MethodRefRepository methodRefRepository;
 
     private String output;
+    private Map<String, Set<String>> alreadyFound = new HashMap<>();
 
     public void init(){
         LocalDateTime current = LocalDateTime.now();
@@ -44,6 +47,16 @@ public class Finder {
             FileUtils.createDirectory(output);
         }else{
             clean(output);
+        }
+
+        String alreadyFoundFilepath = String.join(File.separator, GlobalConfiguration.CYPHER_RESULT_DIRECTORY, "already_found.json");
+        if(FileUtils.fileExists(alreadyFoundFilepath)){
+            Type type = new TypeToken<Map<String, Set<String>>>(){}.getType();
+            alreadyFound = FileUtils.getJsonContent(alreadyFoundFilepath, type);
+            if(alreadyFound == null){
+                alreadyFound = new HashMap<>();
+            }
+            log.info("Load already found file with size {}.", alreadyFound.size());
         }
     }
 
@@ -72,6 +85,7 @@ public class Finder {
                 log.info("Cypher list size is zero.");
                 return;
             }
+            log.info("Cypher list size is {}.", cyphers.size());
 
             Set<String> globalWebSourceBlacklist = new HashSet<>(Arrays.asList(GlobalConfiguration.CYPHER_WEB_SOURCE_BLACKLIST));
             Set<String> globalWebPathBlacklist = new HashSet<>(Arrays.asList(GlobalConfiguration.CYPHER_WEB_PATH_BLACKLIST));
@@ -85,12 +99,18 @@ public class Finder {
                             cypher.addAllBlacklistToSource(globalWebSourceBlacklist);
                             cypher.getPathBlacklists().addAll(globalWebPathBlacklist);
                         }
+                        if(alreadyFound.containsKey(cypher.getName())){
+                            cypher.getPathBlacklists().addAll(alreadyFound.get(cypher.getName()));
+                            cypher.addAllBlacklistToSource(alreadyFound.get(cypher.getName()));
+                        }
                         int count = 0;
                         int limit = cypher.getLimit();
-                        log.info("Start Cypher {}.", cypher.getName());
+                        if(GlobalConfiguration.SHOW){
+                            log.info("Start Cypher {}.", cypher.getName());
+                        }
                         for(int i=0; i < limit; i++){
                             String currentCypher = cypher.toString();
-                            log.debug(currentCypher);
+                            log.warn("\n"+currentCypher);
                             List<PathValue> result = new ArrayList<>();
 
                             try{
@@ -102,7 +122,14 @@ public class Finder {
                             if(!result.isEmpty()){
                                 Path path = result.get(0).asPath();
                                 String head = output(path, cypher.getDirect(), fos);
-                                log.info("<{}> Found {}", cypher.getName(), head);
+                                if(alreadyFound.containsKey(cypher.getName())){
+                                    alreadyFound.get(cypher.getName()).add(head);
+                                }else{
+                                    alreadyFound.put(cypher.getName(), new HashSet<>(Collections.singletonList(head)));
+                                }
+                                if(GlobalConfiguration.SHOW){
+                                    log.info("<{}> Found {}", cypher.getName(), head);
+                                }
                                 if(head != null){
                                     cypher.addBlacklistToSource(head);
                                     cypher.getPathBlacklists().add(head);
@@ -121,6 +148,10 @@ public class Finder {
         }catch (Exception e){
             e.printStackTrace();
         }
+
+        // 更新already_found.json内容
+        String alreadyFoundFilepath = String.join(File.separator, GlobalConfiguration.CYPHER_RESULT_DIRECTORY, "already_found.json");
+        FileUtils.writeJsonContent(alreadyFoundFilepath, alreadyFound);
     }
 
     public String output(Path path, String direct, OutputStream os) throws IOException {
@@ -195,6 +226,7 @@ public class Finder {
         StringBuilder sb = new StringBuilder();
         int length = nodes.size();
         if("<".equals(direct)){
+            int count = length-1;
             for(int i=length-1;i>=0;i--){
                 String node = nodes.get(i);
                 if(node.equals("[CALL]")){
@@ -203,13 +235,15 @@ public class Finder {
                     sb.append(" -[:ALIAS]-> ");
                 }else{
                     if(length-1 == i){
-                        sb.append(String.format("match path=(m%d:Method {NAME0:\"%s\"})\n", i, node));
+                        sb.append(String.format("match path=(m%d:Method {NAME0:\"%s\"})\n", count, node));
                     }else{
-                        sb.append(String.format("(m%d:Method {NAME0:\"%s\"})\n", i, node));
+                        sb.append(String.format("(m%d:Method {NAME0:\"%s\"})\n", count, node));
                     }
                 }
+                count--;
             }
         }else{
+            int count = 0;
             for(int i=0;i<length;i++){
                 String node = nodes.get(i);
                 if(node.equals("[CALL]")){
@@ -218,11 +252,12 @@ public class Finder {
                     sb.append(" -[:ALIAS]-> ");
                 }else{
                     if(0 == i){
-                        sb.append(String.format("match path=(m%d:Method {NAME0:\"%s\"}) \n", i, node));
+                        sb.append(String.format("match path=(m%d:Method {NAME0:\"%s\"}) \n", count, node));
                     }else{
-                        sb.append(String.format("(m%d:Method {NAME0:\"%s\"}) \n", i, node));
+                        sb.append(String.format("(m%d:Method {NAME0:\"%s\"}) \n", count, node));
                     }
                 }
+                count++;
             }
         }
         sb.append("return path");

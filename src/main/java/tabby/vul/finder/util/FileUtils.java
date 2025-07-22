@@ -7,6 +7,7 @@ import tabby.vul.finder.config.GlobalConfiguration;
 import tabby.vul.finder.data.Cypher;
 
 import java.io.*;
+import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -20,7 +21,29 @@ import java.util.Set;
 @Slf4j
 public class FileUtils {
 
+
+    public static void writeJsonContent(String path, Object content){
+        try(FileWriter writer = new FileWriter(path)){
+            GlobalConfiguration.GSON.toJson(content, writer);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static <T> T getJsonContent(String path, Class<T> type){
+        File file = new File(path);
+        if(!file.exists()) return null;
+        FileReader reader = null;
+        try {
+            reader = new FileReader(file);
+            return GlobalConfiguration.GSON.fromJson(reader, type);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static <T> T getJsonContent(String path, Type type){
         File file = new File(path);
         if(!file.exists()) return null;
         FileReader reader = null;
